@@ -41,6 +41,8 @@ class DonkeyKong(pygame.sprite.Sprite): # Donkey Kong eh a classe do player
             self.acc.x = -ACC
         if pressed_keys[K_RIGHT]:
             self.acc.x = ACC     
+        if pressed_keys[K_SPACE]:
+            P1.jump()
         
         # equações fisicas para calcular o movimento com os parametros mais cedo no codigo
         # OBS: Newton era o GOAT
@@ -55,12 +57,19 @@ class DonkeyKong(pygame.sprite.Sprite): # Donkey Kong eh a classe do player
             self.pos.x = WIDTH
      
         self.rect.midbottom = self.pos
+    
+    def jump(self):
+        hits = pygame.sprite.spritecollide(self, plataformas, False)
+        if hits:
+            self.vel.y = -15
 
     def update(self): # atualiza o estado do player
-        hits = pygame.sprite.spritecollide(P1 , plataforma, False) # confere se esta colidindo com algo
-        if hits: # se colidir com o chao, coloca a velocidade vertical como 0
-            self.pos.y = hits[0].rect.top + 1
-            self.vel.y = False
+        hits = pygame.sprite.spritecollide(P1 , plataformas, False) # confere se esta colidindo com algo
+        if P1.vel.y > 0:        
+            if hits: # se colidir com o chao, coloca a velocidade vertical como 0
+                self.vel.y = 0
+                self.pos.y = hits[0].rect.top + 1
+
  
 class plataforma(pygame.sprite.Sprite): # classe para as plataformas do jogo
     def __init__(self):
@@ -90,6 +99,7 @@ while True:
         if event.type == QUIT:
             pygame.quit()
             sys.exit() # para o  codigo para não quebrar como o resto do game loop vindo dps
+        
      
     displaysurface.fill((0,0,0))
 
