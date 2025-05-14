@@ -33,8 +33,7 @@ class DonkeyKong(pygame.sprite.Sprite): # Donkey Kong eh a classe do player
         self.acc = vec(0,0)
     
     def move(self): # movimentação do player
-        self.acc = vec(0,0)
- 
+        self.acc = vec(0,0.5) # gravidade
         pressed_keys = pygame.key.get_pressed()
         
         # condicionais para cada tecla
@@ -56,11 +55,18 @@ class DonkeyKong(pygame.sprite.Sprite): # Donkey Kong eh a classe do player
             self.pos.x = WIDTH
      
         self.rect.midbottom = self.pos
+
+    def update(self): # atualiza o estado do player
+        hits = pygame.sprite.spritecollide(P1 , plataforma, False) # confere se esta colidindo com algo
+        if hits: # se colidir com o chao, coloca a velocidade vertical como 0
+            self.pos.y = hits[0].rect.top + 1
+            self.vel.y = False
  
 class plataforma(pygame.sprite.Sprite): # classe para as plataformas do jogo
     def __init__(self):
         super().__init__()
 
+        # parametros do piso
         self.surf = pygame.Surface((WIDTH, 20))
         self.surf.fill((255,0,0))
         self.rect = self.surf.get_rect(center = (WIDTH/2, HEIGHT - 10))
@@ -73,7 +79,11 @@ P1 = DonkeyKong()
 all_sprites = pygame.sprite.Group()
 all_sprites.add(PT1)
 all_sprites.add(P1)
- 
+
+# cria grupo de sprites para colisão
+plataformas = pygame.sprite.Group()
+plataformas.add(PT1)
+
 # game loop principal
 while True:
     for event in pygame.event.get():
@@ -82,10 +92,13 @@ while True:
             sys.exit() # para o  codigo para não quebrar como o resto do game loop vindo dps
      
     displaysurface.fill((0,0,0))
- 
+
+
     for entity in all_sprites:
         displaysurface.blit(entity.surf, entity.rect)
  
     pygame.display.update() # atualiza o display constantemente	
+    P1.update() # atualiza o player constantemente
     P1.move() # possibilita o player a se movimentar
+
     FramePerSec.tick(FPS)
