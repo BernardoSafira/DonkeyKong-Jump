@@ -1,6 +1,8 @@
+# importações necessárias
 import pygame
-import sys
 from pygame.locals import *
+import sys
+import random
  
 pygame.init()
 vec = pygame.math.Vector2  #pra jogos 2d
@@ -8,9 +10,11 @@ vec = pygame.math.Vector2  #pra jogos 2d
 # parametros para a janela
 HEIGHT = 450
 WIDTH = 400
+
 # parametros fisicos para a movimentação
 ACC = 0.5
 FRIC = -0.12
+
 # eh o fps, bem auto explicativo
 FPS = 60
 FramePerSec = pygame.time.Clock()
@@ -23,7 +27,7 @@ class DonkeyKong(pygame.sprite.Sprite): # Donkey Kong eh a classe do player
     def __init__(self):
         super().__init__() 
 
-        self.surf = pygame.Surface((30, 30)) # coloca um quadrado 30 por 40
+        self.surf = pygame.Surface((43, 43)) # coloca um quadrado 30 por 40
         self.surf.fill((128,255,40)) # preenche este quadrado com a cor do rgb apontada no argumento
         self.rect = self.surf.get_rect(center = (10, 420))
 
@@ -71,27 +75,52 @@ class DonkeyKong(pygame.sprite.Sprite): # Donkey Kong eh a classe do player
                 self.pos.y = hits[0].rect.top + 1
 
  
-class plataforma(pygame.sprite.Sprite): # classe para as plataformas do jogo
+class piso(pygame.sprite.Sprite): # classe para o piso do jogo
     def __init__(self):
         super().__init__()
 
         # parametros do piso
         self.surf = pygame.Surface((WIDTH, 20))
-        self.surf.fill((255,0,0))
+        self.surf.fill((255, 0, 0))
         self.rect = self.surf.get_rect(center = (WIDTH/2, HEIGHT - 10))
+ 
+class plataforma(pygame.sprite.Sprite): # classe para as plataformas do jogo
+    def __init__(self):
+        super().__init__()
+
+        # parâmetros ALEATORIOS das plataformas
+        self.surf = pygame.Surface((random.randint(50,100), 12))
+        self.surf.fill((0,255,0))
+        self.rect = self.surf.get_rect(center = (random.randint(0,WIDTH-10), random.randint(0, HEIGHT-30)))
+
+def plat_gen(): # função de geração randomica das plataformas
+    while len(plataformas) < 7: # 7 eh o unico numero q funciona de um jeito bom, n me pergunte pq
+        width = random.randrange(50,100)
+
+        p  = plataforma()             
+        p.rect.center = (random.randrange(0, WIDTH - width),
+                             random.randrange(-50, 0))
+        plataformas.add(p)
+        all_sprites.add(p)
 
 # criação dos objetos 
-PT1 = plataforma()
+chao = piso()
 P1 = DonkeyKong()
 
 # estetica
 all_sprites = pygame.sprite.Group()
-all_sprites.add(PT1)
+all_sprites.add(chao)
 all_sprites.add(P1)
 
 # cria grupo de sprites para colisão
 plataformas = pygame.sprite.Group()
-plataformas.add(PT1)
+plataformas.add(chao)
+
+# cria as plataformas da tela inicial
+for x in range(random.randint(5, 6)):
+    pl = plataforma()
+    plataformas.add(pl)
+    all_sprites.add(pl)
 
 # game loop principal
 while True:
@@ -100,13 +129,20 @@ while True:
             pygame.quit()
             sys.exit() # para o  codigo para não quebrar como o resto do game loop vindo dps
         
-     
     displaysurface.fill((0,0,0))
-
 
     for entity in all_sprites:
         displaysurface.blit(entity.surf, entity.rect)
- 
+
+    plat_gen() # chama a função de geração de plataformas
+
+    if P1.rect.top <= HEIGHT / 3: # condicional que ve a altura do player para fazer a tela subir junto dele, faz isso atualizando as posições do jogador e das plataformas constantemente
+        P1.pos.y += abs(P1.vel.y)
+        for plat in plataformas:
+            plat.rect.y += abs(P1.vel.y)
+            if plat.rect.top >= HEIGHT:
+                plat.kill()
+
     pygame.display.update() # atualiza o display constantemente	
     P1.update() # atualiza o player constantemente
     P1.move() # possibilita o player a se movimentar
