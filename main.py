@@ -31,6 +31,9 @@ class DonkeyKong(pygame.sprite.Sprite): # Donkey Kong eh a classe do player
     def __init__(self):
         super().__init__() 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -94,9 +97,12 @@ class DonkeyKong(pygame.sprite.Sprite): # Donkey Kong eh a classe do player
 class platform(pygame.sprite.Sprite): # classe para as plataformas do jogo
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     def _init_(self):
         super()._init_()
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
     def __init__(self):
