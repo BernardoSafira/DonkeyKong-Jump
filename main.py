@@ -3,9 +3,10 @@ import pygame
 from pygame.locals import *
 import sys
 import random
- 
+import time
+
 pygame.init()
-vec = pygame.math.Vector2 #2 for two dimensional
+vec = pygame.math.Vector2 #2 para calculos em 2 dimensões
 
 # parametros para a janela
 HEIGHT = 450
@@ -18,25 +19,17 @@ FRIC = -0.12
 # eh o fps, bem auto explicativo
 FPS = 60
 FramePerSec = pygame.time.Clock()
- 
+
+# fonte para a pontuação do jogo
+font = pygame.font.SysFont(None, 48)
+
 displaysurface = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Donkey Kong: JUMP") # nome da janela
 pygame.display.set_icon(pygame.image.load('icon.png')) # coloca barril como icone
  
 class DonkeyKong(pygame.sprite.Sprite): # Donkey Kong eh a classe do player
-<<<<<<< Updated upstream
     def _init_(self):
         super()._init_() 
-=======
-    def __init__(self):
-        super().__init__() 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
         #self.image = pygame.image.load("character.png")
         self.surf = pygame.Surface((30, 30)) # coloca um quadrado como o player
         self.surf.fill((255,255,0)) # preenche este quadrado com a cor do rgb apontada no argumento
@@ -49,6 +42,9 @@ class DonkeyKong(pygame.sprite.Sprite): # Donkey Kong eh a classe do player
 
         # variavel que indica se o player esta pulando ou nao
         self.jumping = False
+
+        # pontuação do jogador como variável - contato com o piso faz a pontuação ser 1 no começo, isso faz começar com 0 sem ter q mecher nas classes 
+        self.score = -1
  
     def move(self): # movimentação do player
         self.acc = vec(0,0.5) # gravidade
@@ -93,31 +89,31 @@ class DonkeyKong(pygame.sprite.Sprite): # Donkey Kong eh a classe do player
                     self.pos.y = hits[0].rect.top +1
                     self.vel.y = 0
                     self.jumping = False
+                    if hits[0].point == True: # aumenta a pontuação qnd entra em contato com uma plataforma nova
+                        hits[0].point = False   
+                        self.score += 1         
  
 class platform(pygame.sprite.Sprite): # classe para as plataformas do jogo
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     def _init_(self):
         super()._init_()
-=======
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-    def __init__(self):
-        super().__init__()
->>>>>>> Stashed changes
 
         # parâmetros ALEATORIOS das plataformas
         self.surf = pygame.Surface((random.randint(50,100), 12))
         self.surf.fill((0,255,0))
         self.rect = self.surf.get_rect(center = (random.randint(0,WIDTH-10), random.randint(0, HEIGHT-30)))
+        
+        self.speed = random.randint(-1, 1) # gera a velocidade aleatoria das plataformas qnd se mexem
+        self.moving = True # Marca se a plataforma deve se mexer
+        self.point = True # atributo que marca se a plataforma ja deu o seu ponto
  
-    def move(self): 
-        pass
- 
- 
+    def move(self): # movimenta a plataforma para a direita ou esquerda em ritmo constante + fazer ela trocar de lado qnd chega no fim da tela
+        if self.moving == True:  
+            self.rect.move_ip(self.speed,0)
+            if self.speed > 0 and self.rect.left > WIDTH:
+                self.rect.right = 0
+            if self.speed < 0 and self.rect.right < 0:
+                self.rect.left = WIDTH
+
 def check(platform, groupies): # checa se duas plataformas geradas aleatoriamente estão em contato, deletando as novas para garantir que vai ficar sem overlap
     if pygame.sprite.spritecollideany(platform,groupies):
         return True
@@ -139,11 +135,13 @@ def plat_gen(): # função de geração randomica das plataformas
              p = platform()
              p.rect.center = (random.randrange(0, WIDTH - width), random.randrange(-50, 0))
              C = check(p, platforms) # chama a função de checagem
+
         platforms.add(p)
         all_sprites.add(p)
 
 # criação dos objetos 
 PT1 = platform()
+PT1.moving = False # garante que o piso n sai andando por ai
 P1 = DonkeyKong()
 
 # estetica
@@ -167,7 +165,7 @@ for x in range(random.randint(4,5)):
         C = check(pl, platforms)
     platforms.add(pl)
     all_sprites.add(pl)
- 
+
 # game loop principal
 while True:
     P1.update()
@@ -175,6 +173,16 @@ while True:
         if event.type == QUIT:
             pygame.quit()
             sys.exit() # para o  codigo para não quebrar como o resto do game loop vindo dps
+        
+        if P1.rect.top > HEIGHT: # checa se a altura do player está abaixo do fim da tela, se sim mata o jogo
+            for entity in all_sprites:
+                entity.kill()
+                time.sleep(1)
+                displaysurface.fill((255,0,0))
+                pygame.display.update()
+                time.sleep(1)
+                pygame.quit()
+                sys.exit()
         
         # pulo
         if event.type == pygame.KEYDOWN:    
@@ -198,6 +206,11 @@ while True:
     for entity in all_sprites:
         displaysurface.blit(entity.surf, entity.rect)
         entity.move()
- 
+
+    pontos = str(P1.score) # coloca os pontos no formato de string
+    if P1.score > -1: # coloquei o if pq senao mostrava -1 como a pontuação inicial por um pouquinho
+        text = font.render(pontos, True, (0, 0, 255))
+        displaysurface.blit(text, (10, 10))
+    
     pygame.display.update()
     FramePerSec.tick(FPS)
