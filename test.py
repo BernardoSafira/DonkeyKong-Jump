@@ -24,13 +24,8 @@ pygame.display.set_caption("Donkey Kong: JUMP") # nome da janela
 pygame.display.set_icon(pygame.image.load('icon.png')) # coloca barril como icone
  
 class DonkeyKong(pygame.sprite.Sprite): # Donkey Kong eh a classe do player
-<<<<<<< Updated upstream
-    def _init_(self):
-        super()._init_() 
-=======
     def __init__(self):
         super().__init__() 
->>>>>>> Stashed changes
         #self.image = pygame.image.load("character.png")
         self.surf = pygame.Surface((30, 30)) # coloca um quadrado como o player
         self.surf.fill((255,255,0)) # preenche este quadrado com a cor do rgb apontada no argumento
@@ -89,13 +84,8 @@ class DonkeyKong(pygame.sprite.Sprite): # Donkey Kong eh a classe do player
                     self.jumping = False
  
 class platform(pygame.sprite.Sprite): # classe para as plataformas do jogo
-<<<<<<< Updated upstream
-    def _init_(self):
-        super()._init_()
-=======
     def __init__(self):
         super().__init__()
->>>>>>> Stashed changes
 
         # parâmetros ALEATORIOS das plataformas
         self.surf = pygame.Surface((random.randint(50,100), 12))
