@@ -1,0 +1,5 @@
+bernardo,12
+jorel,10
+felipe,9
+,2
+irmao do j,1
