@@ -23,6 +23,16 @@ FramePerSec = pygame.time.Clock()
 # fonte para a pontuação do jogo
 font = pygame.font.SysFont(None, 48)
 
+# inicia assets
+DK_idle = pygame.image.load('Sprites DonkeyKong/Stand Idle 1/Idol 1.png') 
+DK_run = [
+    pygame.image.load('Sprites DonkeyKong/Running/Running 1.png'), 
+    pygame.image.load('Sprites DonkeyKong/Running/Running 2.png'), 
+    pygame.image.load('Sprites DonkeyKong/Running/Running 3.png'), 
+    pygame.image.load('Sprites DonkeyKong/Running/Running 4.png'), 
+    pygame.image.load('Sprites DonkeyKong/Running/Running 5.png'), 
+]
+
 displaysurface = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Donkey Kong: JUMP") # nome da janela
 pygame.display.set_icon(pygame.image.load('icon.png')) # coloca barril como icone
@@ -30,9 +40,8 @@ pygame.display.set_icon(pygame.image.load('icon.png')) # coloca barril como icon
 class DonkeyKong(pygame.sprite.Sprite): # Donkey Kong eh a classe do player
     def __init__(self):
         super().__init__() 
-        #self.image = pygame.image.load("character.png")
         self.surf = pygame.Surface((30, 30)) # coloca um quadrado como o player
-        self.surf.fill((255,255,0)) # preenche este quadrado com a cor do rgb apontada no argumento
+        self.surf.fill((0,0,0)) # preenche este quadrado com a cor do rgb apontada no argumento - deixar invisivel dps
         self.rect = self.surf.get_rect()
 
         # variaveis bidimensionais pra facilitar calculos dos vetores de movimentação na fisica do jogo (x, y)
@@ -202,6 +211,8 @@ while True:
     plat_gen() # chama a função de geração de plataformas
 
     displaysurface.fill((0,0,0))
+
+
      
     for entity in all_sprites:
         displaysurface.blit(entity.surf, entity.rect)
@@ -212,5 +223,6 @@ while True:
         text = font.render(pontos, True, (0, 0, 255))
         displaysurface.blit(text, (10, 10))
     
+    displaysurface.blit(DK_idle, (P1.pos.x - 18, P1.pos.y - 35)) # coloca o sprite do donkey kong por cima do quadrado
     pygame.display.update()
     FramePerSec.tick(FPS)
