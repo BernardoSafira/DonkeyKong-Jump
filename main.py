@@ -25,7 +25,15 @@ font = pygame.font.SysFont(None, 48)
 
 # inicia assets
 DK = pygame.image.load('Sprites DonkeyKong/Stand Idle 1/Idol 1.png')
-DK_run = [
+DK_run_right = [
+    pygame.image.load('Sprites DonkeyKong/Running/Running 1.png'),
+    pygame.image.load('Sprites DonkeyKong/Running/Running 2.png'),
+    pygame.image.load('Sprites DonkeyKong/Running/Running 3.png'),
+    pygame.image.load('Sprites DonkeyKong/Running/Running 4.png'),
+    pygame.image.load('Sprites DonkeyKong/Running/Running 5.png'),
+]
+
+DK_run_left = [
     pygame.image.load('Sprites DonkeyKong/Running/Running 1.png'),
     pygame.image.load('Sprites DonkeyKong/Running/Running 2.png'),
     pygame.image.load('Sprites DonkeyKong/Running/Running 3.png'),
@@ -53,6 +61,8 @@ class DonkeyKong(pygame.sprite.Sprite):  # Donkey Kong eh a classe do player
         self.pos = vec((10, 360))
         self.vel = vec(0, 0)
         self.acc = vec(0, 0)
+        self.walk_count = 0
+        self.direction = "right"  # ou "left"   
 
         # variavel que indica se o player esta pulando ou nao
         self.jumping = False
@@ -95,6 +105,25 @@ class DonkeyKong(pygame.sprite.Sprite):  # Donkey Kong eh a classe do player
             if self.vel.y < -3:
                 self.vel.y = -3
 
+    def draw(self): # esta função foi feita com auxilio do chat gpt
+        if self.walk_count >= len(DK_run_right) * 5:
+            self.walk_count = 0
+
+        if self.vel.x > 0:
+            displaysurface.blit(DK_run_right[self.walk_count // 5], (self.pos.x - 18, self.pos.y -35))
+            self.direction = "right"
+            self.walk_count += 1
+        elif self.vel.x < 0:
+            displaysurface.blit(DK_run_left[self.walk_count // 5], (self.pos.x - 18, self.pos.y - 35))
+            self.direction = "left"
+            self.walk_count += 1
+        else:
+            # parado — mostra uma imagem estática
+            if self.direction == "right":
+                displaysurface.blit(DK_run_right[0], (self.pos.x - 18, self.pos.y -35))
+            else:
+                displaysurface.blit(DK_run_left[0], (self.pos.x - 18, self.pos.y -35))
+    
     def update(self):
         hits = pygame.sprite.spritecollide(self, platforms, False)  # confere se esta colidindo com algo
         if self.vel.y > 0:  # atualiza o estado do player
@@ -106,6 +135,7 @@ class DonkeyKong(pygame.sprite.Sprite):  # Donkey Kong eh a classe do player
                     if hits[0].point == True:  # aumenta a pontuação qnd entra em contato com uma plataforma nova
                         hits[0].point = False
                         self.score += 1
+    
 
 class platform(pygame.sprite.Sprite):  # classe para as plataformas do jogo
     def __init__(self):
@@ -233,7 +263,7 @@ while True:
         text = font.render(pontos, True, (0, 0, 255))
         displaysurface.blit(text, (10, 10))
 
-    displaysurface.blit(DK, (P1.pos.x - 18, P1.pos.y - 35))  # coloca o sprite do donkey kong por cima do quadrado
-
+    #displaysurface.blit(DK, (P1.pos.x - 18, P1.pos.y - 35))  # coloca o sprite do donkey kong por cima do quadrado
+    P1.draw()
     pygame.display.update()
     FramePerSec.tick(FPS)
