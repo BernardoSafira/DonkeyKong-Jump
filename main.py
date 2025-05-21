@@ -24,7 +24,9 @@ FramePerSec = pygame.time.Clock()
 font = pygame.font.SysFont(None, 48)
 
 # inicia assets
-DK = pygame.image.load('Sprites DonkeyKong/Stand Idle 1/Idol 1.png')
+DK_right = pygame.image.load('Sprites DonkeyKong/Stand Idle 1/Idol 1.png')
+DK_lef = pygame.image.load('Sprites DonkeyKong/Stand Idle 1/Idol 1.png')
+
 DK_run_right = [
     pygame.image.load('Sprites DonkeyKong/Running/Running 1.png'),
     pygame.image.load('Sprites DonkeyKong/Running/Running 2.png'),
@@ -120,9 +122,9 @@ class DonkeyKong(pygame.sprite.Sprite):  # Donkey Kong eh a classe do player
         else:
             # parado — mostra uma imagem estática
             if self.direction == "right":
-                displaysurface.blit(DK, (self.pos.x - 18, self.pos.y -35))
+                displaysurface.blit(DK_right, (self.pos.x - 18, self.pos.y -35))
             else:
-                displaysurface.blit(DK, (self.pos.x - 18, self.pos.y -35))
+                displaysurface.blit(DK_right, (self.pos.x - 18, self.pos.y -35))
     
     def update(self):
         hits = pygame.sprite.spritecollide(self, platforms, False)  # confere se esta colidindo com algo
