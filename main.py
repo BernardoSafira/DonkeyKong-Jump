@@ -109,20 +109,20 @@ class DonkeyKong(pygame.sprite.Sprite):  # Donkey Kong eh a classe do player
         if self.walk_count >= len(DK_run_right) * 5:
             self.walk_count = 0
 
-        if self.vel.x > 0:
+        if self.vel.x > 3:
             displaysurface.blit(DK_run_right[self.walk_count // 5], (self.pos.x - 18, self.pos.y -35))
             self.direction = "right"
             self.walk_count += 1
-        elif self.vel.x < 0:
+        elif self.vel.x < -3:
             displaysurface.blit(DK_run_left[self.walk_count // 5], (self.pos.x - 18, self.pos.y - 35))
             self.direction = "left"
             self.walk_count += 1
         else:
             # parado — mostra uma imagem estática
             if self.direction == "right":
-                displaysurface.blit(DK_run_right[0], (self.pos.x - 18, self.pos.y -35))
+                displaysurface.blit(DK, (self.pos.x - 18, self.pos.y -35))
             else:
-                displaysurface.blit(DK_run_left[0], (self.pos.x - 18, self.pos.y -35))
+                displaysurface.blit(DK, (self.pos.x - 18, self.pos.y -35))
     
     def update(self):
         hits = pygame.sprite.spritecollide(self, platforms, False)  # confere se esta colidindo com algo
@@ -264,6 +264,12 @@ while True:
         displaysurface.blit(text, (10, 10))
 
     #displaysurface.blit(DK, (P1.pos.x - 18, P1.pos.y - 35))  # coloca o sprite do donkey kong por cima do quadrado
+    print("Posição X: ", P1.pos.x)
+    print("Posição Y: ", P1.pos.y)
+    print("Velocidade X: ", P1.vel.x)
+    print("Velocidade y: ", P1.vel.y)   
+    print("-" * 100) 
     P1.draw()
+
     pygame.display.update()
     FramePerSec.tick(FPS)
