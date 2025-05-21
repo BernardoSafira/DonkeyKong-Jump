@@ -28,8 +28,8 @@ pygame.display.set_caption("Donkey Kong: JUMP") # nome da janela
 pygame.display.set_icon(pygame.image.load('icon.png')) # coloca barril como icone
  
 class DonkeyKong(pygame.sprite.Sprite): # Donkey Kong eh a classe do player
-    def _init_(self):
-        super()._init_() 
+    def __init__(self):
+        super().__init__() 
         #self.image = pygame.image.load("character.png")
         self.surf = pygame.Surface((30, 30)) # coloca um quadrado como o player
         self.surf.fill((255,255,0)) # preenche este quadrado com a cor do rgb apontada no argumento
@@ -94,8 +94,8 @@ class DonkeyKong(pygame.sprite.Sprite): # Donkey Kong eh a classe do player
                         self.score += 1         
  
 class platform(pygame.sprite.Sprite): # classe para as plataformas do jogo
-    def _init_(self):
-        super()._init_()
+    def __init__(self):
+        super().__init__()
 
         # parâmetros ALEATORIOS das plataformas
         self.surf = pygame.Surface((random.randint(50,100), 12))
@@ -115,7 +115,7 @@ class platform(pygame.sprite.Sprite): # classe para as plataformas do jogo
                 self.rect.left = WIDTH
 
 def check(platform, groupies): # checa se duas plataformas geradas aleatoriamente estão em contato, deletando as novas para garantir que vai ficar sem overlap
-    if pygame.sprite.spritecollideany(platform,groupies):
+    if pygame.sprite.spritecollideany(platform, groupies):
         return True
     else:
         for entity in groupies:
