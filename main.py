@@ -24,7 +24,7 @@ FramePerSec = pygame.time.Clock()
 font = pygame.font.SysFont(None, 48)
 
 # inicia assets
-DK_idle = pygame.image.load('Sprites DonkeyKong/Stand Idle 1/Idol 1.png') 
+DK = pygame.image.load('Sprites DonkeyKong/Stand Idle 1/Idol 1.png') 
 DK_run = [
     pygame.image.load('Sprites DonkeyKong/Running/Running 1.png'), 
     pygame.image.load('Sprites DonkeyKong/Running/Running 2.png'), 
@@ -212,8 +212,6 @@ while True:
 
     displaysurface.fill((0,0,0))
 
-
-     
     for entity in all_sprites:
         displaysurface.blit(entity.surf, entity.rect)
         entity.move()
@@ -221,8 +219,9 @@ while True:
     pontos = str(P1.score) # coloca os pontos no formato de string
     if P1.score > -1: # coloquei o if pq senao mostrava -1 como a pontuação inicial por um pouquinho
         text = font.render(pontos, True, (0, 0, 255))
-        displaysurface.blit(text, (10, 10))
+        displaysurface.blit(text, (10, 10))  
+
+    displaysurface.blit(DK, (P1.pos.x - 18, P1.pos.y - 35)) # coloca o sprite do donkey kong por cima do quadrado
     
-    displaysurface.blit(DK_idle, (P1.pos.x - 18, P1.pos.y - 35)) # coloca o sprite do donkey kong por cima do quadrado
     pygame.display.update()
     FramePerSec.tick(FPS)
