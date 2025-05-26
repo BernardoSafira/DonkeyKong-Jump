@@ -1,9 +1,10 @@
+leon,35
+t,26
+o,17
+eu,14
 bernardo,12
 y,12
 jorel,10
 l,10
 felipe,9
 u,9
-,3
-,2
-irmao do j,1
