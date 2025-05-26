@@ -117,9 +117,16 @@ def carregar_ranking():
     if os.path.exists("ranking.txt"):
         with open("ranking.txt", "r") as f:
             for linha in f:
-                nome, score = linha.strip().split(",")
+                linha = linha.strip()
+                if not linha:
+                    continue  # ignora linhas vazias
+                partes = linha.split(",")
+                if len(partes) != 2:
+                    continue  # ignora linhas mal formatadas
+                nome, score = partes
                 recordes.append((nome, int(score)))
         recordes.sort(key=lambda x: x[1], reverse=True)
+
 
 def game_over_screen(name, score):
     parar_musica()
