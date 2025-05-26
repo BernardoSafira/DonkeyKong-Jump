@@ -45,6 +45,22 @@ DK_run_left = [
     pygame.image.load('Sprites DonkeyKong/Running Left/Running 5.png'),
 ]
 
+DK_jump_right = [
+    pygame.image.load('Sprites DonkeyKong/Jump Right/Jump 1.png'),
+    pygame.image.load('Sprites DonkeyKong/Jump Right/Jump 2.png'),
+    pygame.image.load('Sprites DonkeyKong/Jump Right/Jump 3.png'),
+    pygame.image.load('Sprites DonkeyKong/Jump Right/Jump 4.png'),
+    pygame.image.load('Sprites DonkeyKong/Jump Right/Jump 5.png'),
+]
+
+DK_jump_left = [
+    pygame.image.load('Sprites DonkeyKong/Jump Left/Jump 1.png'),
+    pygame.image.load('Sprites DonkeyKong/Jump Left/Jump 2.png'),
+    pygame.image.load('Sprites DonkeyKong/Jump Left/Jump 3.png'),
+    pygame.image.load('Sprites DonkeyKong/Jump Left/Jump 4.png'),
+    pygame.image.load('Sprites DonkeyKong/Jump Left/Jump 5.png'),
+]
+
 displaysurface = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Donkey Kong: JUMP")  # nome da janela
 
@@ -122,6 +138,7 @@ class DonkeyKong(pygame.sprite.Sprite):  # Donkey Kong eh a classe do player
 
         # variavel que indica se o player esta pulando ou nao
         self.jumping = False
+        self.jump_count = 0
 
         # pontuação do jogador como variável - contato com o piso faz a pontuação ser 1 no começo, isso faz começar com 0 sem ter q mecher nas classes 
         self.score = -1
@@ -161,24 +178,37 @@ class DonkeyKong(pygame.sprite.Sprite):  # Donkey Kong eh a classe do player
             if self.vel.y < -3:
                 self.vel.y = -3
 
-    def draw(self): # esta função foi feita com auxilio do chat gpt
+    def draw(self):
         if self.walk_count >= len(DK_run_right) * 5:
             self.walk_count = 0
+        if self.jump_count >= len(DK_jump_right) * 5:
+            self.jump_count = len(DK_jump_right) * 5 - 1  # mantém no último quadro do pulo
 
-        if self.vel.x > 3:
-            displaysurface.blit(DK_run_right[self.walk_count // 5], (self.pos.x - 18, self.pos.y -35))
+        if self.jumping:  # Personagem no ar
+            if self.direction == "right":
+                displaysurface.blit(DK_jump_right[self.jump_count // 5], (self.pos.x - 18, self.pos.y - 35))
+            else:
+                displaysurface.blit(DK_jump_left[self.jump_count // 5], (self.pos.x - 18, self.pos.y - 35))
+            self.jump_count += 1
+
+        elif self.vel.x > 3:  # Correndo para a direita no chão
+            displaysurface.blit(DK_run_right[self.walk_count // 5], (self.pos.x - 18, self.pos.y - 35))
             self.direction = "right"
             self.walk_count += 1
-        elif self.vel.x < -3:
+            self.jump_count = 0  # reseta ao tocar o chão
+
+        elif self.vel.x < -3:  # Correndo para a esquerda no chão
             displaysurface.blit(DK_run_left[self.walk_count // 5], (self.pos.x - 18, self.pos.y - 35))
             self.direction = "left"
             self.walk_count += 1
-        else:
-            # parado — mostra uma imagem estática
+            self.jump_count = 0  # reseta ao tocar o chão
+
+        else:  # Parado no chão
             if self.direction == "right":
-                displaysurface.blit(DK_right, (self.pos.x - 18, self.pos.y -35))
+                displaysurface.blit(DK_right, (self.pos.x - 18, self.pos.y - 35))
             else:
-                displaysurface.blit(DK_left, (self.pos.x - 18, self.pos.y -35))
+                displaysurface.blit(DK_left, (self.pos.x - 18, self.pos.y - 35))
+            self.jump_count = 0  # reseta ao tocar o chão
     
     def update(self):
         hits = pygame.sprite.spritecollide(self, platforms, False)  # confere se esta colidindo com algo
