@@ -26,6 +26,7 @@ font = pygame.font.SysFont(None, 48)
 small_font = pygame.font.SysFont(None, 32)
 
 # inicia assets
+fundo = pygame.image.load('selva.png')
 DK_right = pygame.image.load('Sprites DonkeyKong/Stand Idle 1 Right/Idol 1.png')
 DK_left = pygame.image.load('Sprites DonkeyKong/Stand Idle 1 Left/Idol 1.png')
 
@@ -277,7 +278,7 @@ def reset_game():
     PT1 = platform()
     PT1.moving = False  # garante que o piso n sai andando por ai
     PT1.surf = pygame.Surface((WIDTH, 20))
-    PT1.surf.fill((255, 0, 0))
+    PT1.surf.fill((85, 0, 0))
     PT1.rect = PT1.surf.get_rect(center=(WIDTH / 2, HEIGHT - 10))
 
     P1 = DonkeyKong()
@@ -333,9 +334,11 @@ while True:
     plat_gen()  # chama a função de geração de plataformas
 
     displaysurface.fill((0, 0, 0))
+    displaysurface.blit(fundo,(0, 0))
 
     for entity in all_sprites:
-        displaysurface.blit(entity.surf, entity.rect)
+        if not isinstance (entity, DonkeyKong):
+            displaysurface.blit(entity.surf, entity.rect)
         if isinstance(entity, platform):
             entity.move()
 
