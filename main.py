@@ -3,7 +3,6 @@ import pygame
 from pygame.locals import *
 import sys
 import random
-import time
 import os
 
 pygame.init()
@@ -83,7 +82,6 @@ musica_fase = 'Soundtrack/Fase.mp3'
 som_game_over = pygame.mixer.Sound('Soundtrack/death.mp3')
 som_pulo = pygame.mixer.Sound('Soundtrack/Som de pulo.mp3')
 
-# Funções auxiliares para música
 def tocar_musica(caminho, loop=-1):
     pygame.mixer.music.load(caminho)
     pygame.mixer.music.play(loop)
@@ -91,7 +89,6 @@ def tocar_musica(caminho, loop=-1):
 def parar_musica():
     pygame.mixer.music.stop()
 
-# Tela inicial com a imagem e música
 def tela_inicial():
     tocar_musica(musica_nome)
     waiting = True
@@ -119,30 +116,34 @@ def carregar_ranking():
             for linha in f:
                 linha = linha.strip()
                 if not linha:
-                    continue  # ignora linhas vazias
+                    continue
                 partes = linha.split(",")
                 if len(partes) != 2:
-                    continue  # ignora linhas mal formatadas
+                    continue
                 nome, score = partes
                 recordes.append((nome, int(score)))
         recordes.sort(key=lambda x: x[1], reverse=True)
 
+# Função para adicionar o Easter Egg Cranky Kong
+def adicionar_easter_egg():
+    global recordes
+    recordes = [r for r in recordes if r[0] != "Cranky Kong"]
+    recordes.insert(0, ("Cranky Kong", 99999))
 
 def game_over_screen(name, score):
     parar_musica()
     som_game_over.play()
 
-    # Exibe a imagem de game over por 3 segundos
     displaysurface.blit(imagem_game_over, (0, 0))
     pygame.display.update()
     pygame.time.wait(3000)
 
-    # Registra a pontuação
     recordes.append((name, score))
     recordes.sort(key=lambda x: x[1], reverse=True)
     salvar_ranking()
 
-    # Depois exibe ranking até ENTER
+    adicionar_easter_egg()  # ⬅️ Adiciona o Easter Egg no ranking
+
     waiting = True
     while waiting:
         displaysurface.fill((0, 0, 0))
@@ -234,24 +235,23 @@ class DonkeyKong(pygame.sprite.Sprite):
             self.vel.y = -3
 
     def draw(self):
-        if self.walk_count >= len(DK_run_right) * 5:
+        if self.walk_count >= len(DK_run_right) * 2:
             self.walk_count = 0
-        if self.jump_count >= len(DK_jump_right) * 5:
-            self.jump_count = len(DK_jump_right) * 5 - 1
+        if self.jump_count >= len(DK_jump_right) * 2:
+            self.jump_count = len(DK_jump_right) * 2 - 1
         if self.jumping:
             if self.direction == "right":
-                displaysurface.blit(DK_jump_right[self.jump_count // 5], (self.pos.x - 18, self.pos.y - 35))
+                displaysurface.blit(DK_jump_right[self.jump_count // 2], (self.pos.x - 18, self.pos.y - 35))
             else:
-                displaysurface.blit(DK_jump_left[self.jump_count // 5], (self.pos.x - 18, self.pos.y - 35))
+                displaysurface.blit(DK_jump_left[self.jump_count // 2], (self.pos.x - 18, self.pos.y - 35))
             self.jump_count += 1
-        elif self.vel.x > 3:
-            displaysurface.blit(DK_run_right[self.walk_count // 5], (self.pos.x - 18, self.pos.y - 35))
-            self.direction = "right"
-            self.walk_count += 1
-            self.jump_count = 0
-        elif self.vel.x < -3:
-            displaysurface.blit(DK_run_left[self.walk_count // 5], (self.pos.x - 18, self.pos.y - 35))
-            self.direction = "left"
+        elif abs(self.vel.x) > 0.5:
+            if self.vel.x > 0:
+                displaysurface.blit(DK_run_right[self.walk_count // 2], (self.pos.x - 18, self.pos.y - 35))
+                self.direction = "right"
+            else:
+                displaysurface.blit(DK_run_left[self.walk_count // 2], (self.pos.x - 18, self.pos.y - 35))
+                self.direction = "left"
             self.walk_count += 1
             self.jump_count = 0
         else:
