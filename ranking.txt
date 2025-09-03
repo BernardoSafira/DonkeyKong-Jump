@@ -1,10 +1,10 @@
-teste 2,14
-y,13
-Bruno,12
-j,12
-CrankyKong,9
-Bernardo,6
-pinto,6
-bruno,5
-y,5
-teste,4
+Cranky Kong,99999
+Felipe B,92
+Bernardo S,59
+Felipe B,56
+rick,41
+Diddy ,31
+Felipe B,30
+Victor,28
+ayrton,25
+yochai,24
