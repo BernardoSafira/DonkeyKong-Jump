@@ -76,7 +76,7 @@ try:
 except pygame.error:
     print("Warning: icon.png not found.")
 
-# Carrega trilhas sonoras
+# carrega trilhas sonoras
 musica_nome = 'Soundtrack/Menu.mp3'
 musica_fase = 'Soundtrack/Fase.mp3'
 som_game_over = pygame.mixer.Sound('Soundtrack/death.mp3')
@@ -130,20 +130,21 @@ def adicionar_easter_egg():
     recordes = [r for r in recordes if r[0] != "Cranky Kong"]
     recordes.insert(0, ("Cranky Kong", 99999))
 
-def game_over_screen(name, score):
-    parar_musica()
-    som_game_over.play()
-
+# Exibe a tela de Game Over por 3 segundos.
+def mostrar_tela_game_over():
     displaysurface.blit(imagem_game_over, (0, 0))
     pygame.display.update()
     pygame.time.wait(3000)
 
+# Adiciona a pontuação do jogador e atualiza o ranking.
+def registrar_pontuacao(name, score):
     recordes.append((name, score))
     recordes.sort(key=lambda x: x[1], reverse=True)
     salvar_ranking()
+    adicionar_easter_egg()
 
-    adicionar_easter_egg()  # ⬅️ Adiciona o Easter Egg no ranking
-
+    #Exibe o ranking e aguarda o jogador pressionar ENTER.
+def mostrar_ranking():
     waiting = True
     while waiting:
         displaysurface.fill((0, 0, 0))
@@ -152,22 +153,32 @@ def game_over_screen(name, score):
 
         y = 80
         for i, (n, s) in enumerate(recordes[:5]):
-            rank_text = small_font.render(f"{i+1}. {n} - {s}", True, (255, 255, 255))
+            rank_text = small_font.render(
+                f"{i+1}. {n} - {s}", True, (255, 255, 255)
+            )
             displaysurface.blit(rank_text, (WIDTH // 4, y))
             y += 30
 
-        info = small_font.render("Aperte ENTER para reiniciar", True, (255, 255, 255))
+        info = small_font.render(
+            "Aperte ENTER para reiniciar", True, (255, 255, 255)
+        )
         displaysurface.blit(info, (WIDTH // 10, HEIGHT - 50))
-
         pygame.display.update()
 
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
-            elif event.type == KEYDOWN:
-                if event.key == K_RETURN:
-                    waiting = False
+            elif event.type == KEYDOWN and event.key == K_RETURN:
+                waiting = False
+
+# Nova função de game over, após a refatoração reorganizar suas responsabilidades
+def game_over_screen(name, score):
+    parar_musica()
+    som_game_over.play()
+    mostrar_tela_game_over()
+    registrar_pontuacao(name, score)
+    mostrar_ranking()
 
 def get_player_name():
     name = ""
@@ -192,7 +203,8 @@ def get_player_name():
     parar_musica()
     return name
 
-# Cria esses os sprites e as plataformas ANTES da definição das classes q usam
+# Grupos de sprites usados pelo jogo.
+# Eles são criados antes das classes que os utilizam em seus métodos.
 all_sprites = pygame.sprite.Group()
 platforms = pygame.sprite.Group()
 
@@ -340,8 +352,8 @@ def reset_game():
             platforms.add(pl)
             all_sprites.add(pl)
 
-# O gameloop principal foi transformado em função
-# Impede erros onde variáveis usadas no main poderiam ser chamadas antes de serem definidas
+# Chama o main e começa o game loop somente DEPOIS de tudo estar definido certinho
+# Isso evita erros e dor de cabeça em quem for ler o código
 def main():
     global player_name
 
@@ -394,6 +406,6 @@ def main():
         pygame.display.update()
         FramePerSec.tick(FPS)
 
-# Executa a função main
+
 if __name__ == "__main__":
     main()
