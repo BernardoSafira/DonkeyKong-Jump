@@ -343,7 +343,6 @@ def reset_game():
 # O gameloop principal foi transformado em função
 # Impede erros onde variáveis usadas no main poderiam ser chamadas antes de serem definidas
 def main():
-    """Inicializa e executa o jogo somente depois de todas as definições."""
     global player_name
 
     carregar_ranking()
@@ -395,6 +394,6 @@ def main():
         pygame.display.update()
         FramePerSec.tick(FPS)
 
-
+# Executa a função main
 if __name__ == "__main__":
     main()
