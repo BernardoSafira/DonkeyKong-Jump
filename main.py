@@ -192,6 +192,11 @@ def get_player_name():
     parar_musica()
     return name
 
+# Cria esses os sprites e as plataformas ANTES da definição das classes q usam
+all_sprites = pygame.sprite.Group()
+platforms = pygame.sprite.Group()
+
+
 class DonkeyKong(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
@@ -335,51 +340,61 @@ def reset_game():
             platforms.add(pl)
             all_sprites.add(pl)
 
-carregar_ranking()
-tela_inicial()
-player_name = get_player_name()
-reset_game()
-tocar_musica(musica_fase)
+# O gameloop principal foi transformado em função
+# Impede erros onde variáveis usadas no main poderiam ser chamadas antes de serem definidas
+def main():
+    """Inicializa e executa o jogo somente depois de todas as definições."""
+    global player_name
 
-while True:
-    P1.update()
-    P1.move()
-    for event in pygame.event.get():
-        if event.type == QUIT:
-            pygame.quit()
-            sys.exit()
-        if event.type == KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                P1.jump()
-        if event.type == KEYUP:
-            if event.key == pygame.K_SPACE:
-                P1.cancel_jump()
-    if P1.rect.top > HEIGHT:
-        game_over_screen(player_name, P1.score)
-        tela_inicial()
-        player_name = get_player_name()
-        reset_game()
-        tocar_musica(musica_fase)
-        continue
-    if P1.rect.top <= HEIGHT / 3:
-        P1.pos.y += abs(P1.vel.y)
-        for plat in platforms:
-            plat.rect.y += abs(P1.vel.y)
-            if plat.rect.top >= HEIGHT:
-                plat.kill()
-    plat_gen()
-    displaysurface.blit(fundo, (0, 0))
-    for entity in all_sprites:
-        if not isinstance(entity, DonkeyKong):
-            displaysurface.blit(entity.surf, entity.rect)
-        if isinstance(entity, platform):
-            entity.move()
-    pontos = str(P1.score)
-    if P1.score > -1:
-        text = font.render(pontos, True, (255, 255, 255))
-        displaysurface.blit(text, (10, 10))
-    nome_text = small_font.render(f"Jogador: {player_name}", True, (255, 255, 255))
-    displaysurface.blit(nome_text, (10, 50))
-    P1.draw()
-    pygame.display.update()
-    FramePerSec.tick(FPS)
+    carregar_ranking()
+    tela_inicial()
+    player_name = get_player_name()
+    reset_game()
+    tocar_musica(musica_fase)
+
+    while True:
+        P1.update()
+        P1.move()
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    P1.jump()
+            if event.type == KEYUP:
+                if event.key == pygame.K_SPACE:
+                    P1.cancel_jump()
+        if P1.rect.top > HEIGHT:
+            game_over_screen(player_name, P1.score)
+            tela_inicial()
+            player_name = get_player_name()
+            reset_game()
+            tocar_musica(musica_fase)
+            continue
+        if P1.rect.top <= HEIGHT / 3:
+            P1.pos.y += abs(P1.vel.y)
+            for plat in platforms:
+                plat.rect.y += abs(P1.vel.y)
+                if plat.rect.top >= HEIGHT:
+                    plat.kill()
+        plat_gen()
+        displaysurface.blit(fundo, (0, 0))
+        for entity in all_sprites:
+            if not isinstance(entity, DonkeyKong):
+                displaysurface.blit(entity.surf, entity.rect)
+            if isinstance(entity, platform):
+                entity.move()
+        pontos = str(P1.score)
+        if P1.score > -1:
+            text = font.render(pontos, True, (255, 255, 255))
+            displaysurface.blit(text, (10, 10))
+        nome_text = small_font.render(f"Jogador: {player_name}", True, (255, 255, 255))
+        displaysurface.blit(nome_text, (10, 50))
+        P1.draw()
+        pygame.display.update()
+        FramePerSec.tick(FPS)
+
+
+if __name__ == "__main__":
+    main()
