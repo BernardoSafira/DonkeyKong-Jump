@@ -1,4 +1,4 @@
-# importações necessárias
+# Importa os módulos necessários para a execução do programa
 import pygame
 from pygame.locals import *
 import sys
@@ -6,15 +6,15 @@ import random
 import os
 
 pygame.init()
-pygame.mixer.init()  # Inicializa o mixer de som
+pygame.mixer.init()  # Inicializa o sistema responsável pela reprodução de áudio
 
-vec = pygame.math.Vector2  # 2 para cálculos em 2 dimensões
+vec = pygame.math.Vector2  # Define uma referência para operações com vetores bidimensionais
 
-# parâmetros para a janela
+# Define as dimensões da janela do jogo
 HEIGHT = 450
 WIDTH = 400
 
-# parâmetros físicos para a movimentação
+# Define os valores utilizados nos cálculos de aceleração e atrito
 ACC = 0.5
 FRIC = -0.12
 
@@ -24,7 +24,7 @@ FramePerSec = pygame.time.Clock()
 font = pygame.font.SysFont(None, 48)
 small_font = pygame.font.SysFont(None, 32)
 
-# inicia assets
+# Carrega e redimensiona os recursos visuais utilizados pelo jogo
 fundo = pygame.image.load('selva.png')
 fundo = pygame.transform.scale(fundo, (WIDTH, HEIGHT))
 
@@ -76,7 +76,7 @@ try:
 except pygame.error:
     print("Warning: icon.png not found.")
 
-# carrega trilhas sonoras
+# Define os arquivos de áudio utilizados durante a execução do jogo
 musica_nome = 'Soundtrack/Menu.mp3'
 musica_fase = 'Soundtrack/Fase.mp3'
 som_game_over = pygame.mixer.Sound('Soundtrack/death.mp3')
@@ -124,26 +124,26 @@ def carregar_ranking():
                 recordes.append((nome, int(score)))
         recordes.sort(key=lambda x: x[1], reverse=True)
 
-# Função para adicionar o Easter Egg Cranky Kong
+# Insere o personagem Cranky Kong como uma referência especial no ranking
 def adicionar_easter_egg():
     global recordes
     recordes = [r for r in recordes if r[0] != "Cranky Kong"]
     recordes.insert(0, ("Cranky Kong", 99999))
 
-# Exibe a tela de Game Over por 3 segundos.
+# Apresenta a tela de encerramento da partida durante três segundos
 def mostrar_tela_game_over():
     displaysurface.blit(imagem_game_over, (0, 0))
     pygame.display.update()
     pygame.time.wait(3000)
 
-# Adiciona a pontuação do jogador e atualiza o ranking.
+# Registra a pontuação do jogador e atualiza a classificação
 def registrar_pontuacao(name, score):
     recordes.append((name, score))
     recordes.sort(key=lambda x: x[1], reverse=True)
     salvar_ranking()
     adicionar_easter_egg()
 
-    #Exibe o ranking e aguarda o jogador pressionar ENTER.
+# Apresenta o ranking e aguarda a confirmação do jogador para continuar
 def mostrar_ranking():
     waiting = True
     while waiting:
@@ -172,7 +172,7 @@ def mostrar_ranking():
             elif event.type == KEYDOWN and event.key == K_RETURN:
                 waiting = False
 
-# Nova função de game over, após a refatoração reorganizar suas responsabilidades
+# Coordena as ações necessárias após o encerramento de uma partida
 def game_over_screen(name, score):
     parar_musica()
     som_game_over.play()
@@ -203,8 +203,7 @@ def get_player_name():
     parar_musica()
     return name
 
-# Grupos de sprites usados pelo jogo.
-# Eles são criados antes das classes que os utilizam em seus métodos.
+# Inicializa os grupos responsáveis pelo gerenciamento dos sprites e das plataformas.
 all_sprites = pygame.sprite.Group()
 platforms = pygame.sprite.Group()
 
@@ -352,8 +351,7 @@ def reset_game():
             platforms.add(pl)
             all_sprites.add(pl)
 
-# Chama o main e começa o game loop somente DEPOIS de tudo estar definido certinho
-# Isso evita erros e dor de cabeça em quem for ler o código
+# Inicia o programa somente após a definição de todos os seus componentes
 def main():
     global player_name
 
